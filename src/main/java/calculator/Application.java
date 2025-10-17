@@ -21,5 +21,11 @@ public class Application {
             throw new RuntimeException("BufferedReader 오류 발생", e);
         }
     }
+    private static int calculate(String input) {
+        int sum = 0;
+        List<Integer> ops = parsing(input);
+        for (int num : ops) sum += num;
+        return sum;
+    }
 
 }
