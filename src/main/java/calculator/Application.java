@@ -1,98 +1,25 @@
 package calculator;
 
-import javax.print.attribute.standard.Finishings;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.Buffer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
+
 
 public class Application {
     public static void main(String[] args) {
-        // TODO: 프로그램 구현
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String input = null;
+
         try {
             System.out.println("덧셈할 문자열을 입력해 주세요.");
-            input = br.readLine();
-            int answer = calculate(input);
+            String input = br.readLine();
+
+            Parser parser = new Parser();
+            Calculator calculator = new Calculator(parser.parsing(input.trim()));
+            int answer = calculator.sum();
+
             System.out.println("결과 : " + answer);
         } catch (IOException e) {
             throw new RuntimeException("BufferedReader 오류 발생", e);
         }
-    }
-    private static int calculate(String input) {
-        int sum = 0;
-        if (input.isEmpty()) {
-            throw new IllegalArgumentException("덧셈할 문자열이 입력되지 않았습니다.");
-        }
-
-        List<Integer> ops = parsing(input);
-        for (int num : ops) {
-            if (num <= 0) throw new IllegalArgumentException("양수만 입력이 가능합니다.");
-            sum += num;
-        }
-        return sum;
-    }
-
-    private static List<Integer> parsing(String input) {
-        if (!(input.contains("//") && (input.contains("\n") || input.contains("\\n")))) {
-            return basicParsing(input);
-        } else {
-            return customParsing(input);
-        }
-    }
-
-    private static List<Integer> customParsing(String input) {
-        List<Integer> results = new ArrayList<>();
-        input = input.replace("\\n","\n");
-        int index = input.indexOf("\n");
-        if (input.indexOf("//") > index) {
-            throw new IllegalArgumentException("잘못된 입력입니다.");
-        }
-
-        String parsing = input.substring(index + 1);
-        String parser = input.substring(2, index);
-        System.out.println(parsing);
-
-        for (String str : parsing.split(Pattern.quote(parser))) {
-            System.out.println(str);
-            results.add(Integer.valueOf(str));
-        }
-
-        return results;
-    }
-
-    private static List<Integer> basicParsing(String input) {
-        List<Integer> results = new ArrayList<>();
-        String[] parsingToComma;
-        String[] parsingToColon;
-
-        boolean containsComma = input.contains(",");
-        boolean containsColon = input.contains(":");
-
-        if (containsComma && containsColon) {
-            // ,와 : 모두 있는 경우
-            parsingToComma = input.split(",");
-            for (String str : parsingToComma) {
-                for (String fin : str.split(":")) {
-                    results.add(Integer.valueOf(fin));
-                }
-            }
-        } else if (containsColon) { // 2. :만 있는 경우
-            parsingToColon = input.split(":");
-            for (String fin : parsingToColon) {
-                results.add(Integer.valueOf(fin));
-            }
-        } else if (containsComma) { // 3. ,만 있는 경우
-            parsingToComma = input.split(",");
-            for (String fin : parsingToComma) {
-                results.add(Integer.valueOf(fin));
-            }
-        }
-
-        return results;
     }
 }
