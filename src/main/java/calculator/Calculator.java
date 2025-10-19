@@ -15,6 +15,9 @@ public class Calculator {
     // TODO : 전달받은 int 리스트를 모두 더해줍니다.
     public int sum() {
         int sum = 0;
+        if (ops.isEmpty()) {
+            throw new IllegalArgumentException("더할 숫자가 없습니다.");
+        }
         for (int op : ops) {
             if (op <= 0) {
                 throw new IllegalArgumentException("양수만 입력 가능합니다.");
