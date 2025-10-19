@@ -1,5 +1,7 @@
 package calculator;
 
+import camp.nextstep.edu.missionutils.Console;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,19 +9,14 @@ import java.io.InputStreamReader;
 
 public class Application {
     public static void main(String[] args) {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("덧셈할 문자열을 입력해 주세요.");
+        String input = Console.readLine();
 
-        try {
-            System.out.println("덧셈할 문자열을 입력해 주세요.");
-            String input = br.readLine();
+        Parser parser = new Parser();
+        Calculator calculator = new Calculator(parser.parsing(input.trim()));
+        int answer = calculator.sum();
 
-            Parser parser = new Parser();
-            Calculator calculator = new Calculator(parser.parsing(input.trim()));
-            int answer = calculator.sum();
+        System.out.println("결과 : " + answer);
 
-            System.out.println("결과 : " + answer);
-        } catch (IOException e) {
-            throw new RuntimeException("BufferedReader 오류 발생", e);
-        }
     }
 }
