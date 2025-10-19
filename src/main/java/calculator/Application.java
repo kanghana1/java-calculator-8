@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Application {
     public static void main(String[] args) {
@@ -16,7 +17,7 @@ public class Application {
         try {
             input = br.readLine();
             int answer = calculate(input);
-            System.out.println(answer);
+            System.out.println("결과 : " + answer);
         } catch (IOException e) {
             throw new RuntimeException("BufferedReader 오류 발생", e);
         }
@@ -24,7 +25,10 @@ public class Application {
     private static int calculate(String input) {
         int sum = 0;
         List<Integer> ops = parsing(input);
-        for (int num : ops) sum += num;
+        for (int num : ops) {
+            if (num <= 0) throw new IllegalArgumentException("양수만 입력이 가능합니다.");
+            sum += num;
+        }
         return sum;
     }
 
@@ -37,8 +41,17 @@ public class Application {
     }
 
     private static List<Integer> customParsing(String input) {
+        List<Integer> results = new ArrayList<>();
+        int index = input.replace("\\n","\n").indexOf("\n");
+        String parsing = input.substring(index + 2);
+        String parser = input.substring(2, index - 1);
 
-        return null;
+        for (String str : parsing.split(Pattern.quote(parser))) {
+            System.out.println(str);
+            results.add(Integer.valueOf(str));
+        }
+
+        return results;
     }
 
     private static List<Integer> basicParsing(String input) {
@@ -49,26 +62,22 @@ public class Application {
         boolean containsComma = input.contains(",");
         boolean containsColon = input.contains(":");
 
-        if (containsComma) {
+        if (containsComma && containsColon) {
+            // ,와 : 모두 있는 경우
             parsingToComma = input.split(",");
-
-            // 1. ,와 :이 둘 다 있는 경우
-            if (containsColon) {
-                for (String str : parsingToComma) {
-                    parsingToColon = str.split(":");
-
-                    for (String fin : parsingToColon) {
-                        results.add(Integer.valueOf(fin));
-                    }
-                }
-            } else { // 2. ,만 있는 경우
-                for (String fin : parsingToComma) {
+            for (String str : parsingToComma) {
+                for (String fin : str.split(":")) {
                     results.add(Integer.valueOf(fin));
                 }
             }
-        } else if (containsColon) { // 3. :만 있는 경우
+        } else if (containsColon) { // 2. :만 있는 경우
             parsingToColon = input.split(":");
             for (String fin : parsingToColon) {
+                results.add(Integer.valueOf(fin));
+            }
+        } else if (containsComma) { // 3. ,만 있는 경우
+            parsingToComma = input.split(",");
+            for (String fin : parsingToComma) {
                 results.add(Integer.valueOf(fin));
             }
         }
