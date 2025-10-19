@@ -15,6 +15,7 @@ public class Application {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String input = null;
         try {
+            System.out.println("덧셈할 문자열을 입력해 주세요.");
             input = br.readLine();
             int answer = calculate(input);
             System.out.println("결과 : " + answer);
@@ -24,6 +25,10 @@ public class Application {
     }
     private static int calculate(String input) {
         int sum = 0;
+        if (input.isEmpty()) {
+            throw new IllegalArgumentException("덧셈할 문자열이 입력되지 않았습니다.");
+        }
+
         List<Integer> ops = parsing(input);
         for (int num : ops) {
             if (num <= 0) throw new IllegalArgumentException("양수만 입력이 가능합니다.");
@@ -33,7 +38,7 @@ public class Application {
     }
 
     private static List<Integer> parsing(String input) {
-        if (!input.contains("//")) {
+        if (!(input.contains("//") && (input.contains("\n") || input.contains("\\n")))) {
             return basicParsing(input);
         } else {
             return customParsing(input);
@@ -42,9 +47,15 @@ public class Application {
 
     private static List<Integer> customParsing(String input) {
         List<Integer> results = new ArrayList<>();
-        int index = input.replace("\\n","\n").indexOf("\n");
-        String parsing = input.substring(index + 2);
-        String parser = input.substring(2, index - 1);
+        input = input.replace("\\n","\n");
+        int index = input.indexOf("\n");
+        if (input.indexOf("//") > index) {
+            throw new IllegalArgumentException("잘못된 입력입니다.");
+        }
+
+        String parsing = input.substring(index + 1);
+        String parser = input.substring(2, index);
+        System.out.println(parsing);
 
         for (String str : parsing.split(Pattern.quote(parser))) {
             System.out.println(str);
